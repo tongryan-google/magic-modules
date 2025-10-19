@@ -8,11 +8,16 @@ resource "google_ces_app" "ces_app_ambient_sound_gcs_uri" {
     default_language_code    = "en-US"
     supported_language_codes = ["es-ES", "fr-FR"]
     enable_multilingual_support = true
+<<<<<<< HEAD
     fallback_action          = "escalate"
+=======
+    fallback_action          = "escalate" 
+>>>>>>> ca1aef5cd (Add app resource for CES)
   }
 
   audio_processing_config {
     synthesize_speech_configs {
+<<<<<<< HEAD
       language_code = "en-US"
       voice         = "en-US-Standard-A"
       speaking_rate = 1.0
@@ -21,16 +26,33 @@ resource "google_ces_app" "ces_app_ambient_sound_gcs_uri" {
       language_code = "es-ES"
       voice         = "es-ES-Standard-A"
       speaking_rate = 0.95
+=======
+      language_code = "en-US"          
+      voice         = "en-US-Standard-A"
+      speaking_rate = 1.0                
+    }
+    synthesize_speech_configs {
+      language_code = "es-ES"        
+      voice         = "es-ES-Standard-A"
+      speaking_rate = 0.95               
+>>>>>>> ca1aef5cd (Add app resource for CES)
     }
 
     barge_in_config {
       barge_in_awareness = true
     }
 
+<<<<<<< HEAD
     inactivity_timeout = "300s"
 
     ambient_sound_config {
       gcs_uri = "gs://fake-bucket/sounds/ambient.wav"
+=======
+    inactivity_timeout = "300s" 
+
+    ambient_sound_config {
+      gcs_uri = "gs://my-bucket/sounds/ambient.wav"
+>>>>>>> ca1aef5cd (Add app resource for CES)
       volume_gain_db         = -6.0
     }
   }
@@ -38,6 +60,7 @@ resource "google_ces_app" "ces_app_ambient_sound_gcs_uri" {
   logging_settings {
     redaction_config {
       enable_redaction   = true
+<<<<<<< HEAD
       inspect_template   = "projects/fake-project/locations/us/inspectTemplates/example-inspect"
       deidentify_template = "projects/fake-project/locations/us/deidentifyTemplates/example-deidentify"
     }
@@ -51,6 +74,21 @@ resource "google_ces_app" "ces_app_ambient_sound_gcs_uri" {
       dataset = "projects/fake-project/datasets/fake_app_logs"
       enabled = false
       project = "projects/fake-project"
+=======
+      inspect_template   = "projects/ces-terraform-test/locations/us/inspectTemplates/example-inspect"
+      deidentify_template = "projects/ces-terraform-test/locations/us/deidentifyTemplates/example-deidentify"
+    }
+
+    audio_recording_config {
+      gcs_bucket      = "gs://my-ces-app-audio-recordings"
+      gcs_path_prefix = "projects/ces-terraform-test/location/us/app/test-app/123/$session/123"
+    }
+
+    bigquery_export_settings {
+      dataset = "projects/ces-terraform-test/datasets/ces_app_logs"
+      enabled = false
+      project = "projects/ces-terraform-test"
+>>>>>>> ca1aef5cd (Add app resource for CES)
     }
 
     cloud_logging_settings {
@@ -63,7 +101,11 @@ resource "google_ces_app" "ces_app_ambient_sound_gcs_uri" {
   }
 
   model_settings {
+<<<<<<< HEAD
     model       = "gemini-1.5-flash"
+=======
+    model       = "gemini-1.5-flash" 
+>>>>>>> ca1aef5cd (Add app resource for CES)
     temperature = 0.5
   }
 
@@ -147,9 +189,16 @@ variable_declarations {
     "deployment_env" = "test"
   }
 
+<<<<<<< HEAD
   time_zone_settings {
     time_zone = "America/Los_Angeles"
   }
 
+=======
+  time_zone_settings {   
+    time_zone = "America/Los_Angeles"
+  }
+  
+>>>>>>> ca1aef5cd (Add app resource for CES)
   # Root agent should not be specified when creating an app
 }

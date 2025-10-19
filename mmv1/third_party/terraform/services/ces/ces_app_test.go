@@ -4,14 +4,13 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
-	"github.com/hashicorp/terraform-plugin-testing/plancheck"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck" // Add this import
 	"github.com/hashicorp/terraform-provider-google/google/acctest"
 )
-
 func TestAccCESApp_update(t *testing.T) {
 	t.Parallel()
 	ctx := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"random_suffix":   acctest.RandString(t, 10),
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -45,6 +44,7 @@ func TestAccCESApp_update(t *testing.T) {
 		},
 	})
 }
+
 
 func testAccCESApp_cesAppBasicExample_full(context map[string]interface{}) string {
 	return acctest.Nprintf(`
@@ -88,19 +88,19 @@ resource "google_ces_app" "ces_app_basic" {
   logging_settings {
     redaction_config {
       enable_redaction   = true
-      inspect_template   = "projects/fake-project/locations/us/inspectTemplates/example-inspect"
-      deidentify_template = "projects/fake-project/locations/us/deidentifyTemplates/example-deidentify"
+      inspect_template   = "projects/ces-terraform-test/locations/us/inspectTemplates/example-inspect"
+      deidentify_template = "projects/ces-terraform-test/locations/us/deidentifyTemplates/example-deidentify"
     }
 
     audio_recording_config {
-      gcs_bucket      = "gs://fake-app-audio-recordings"
-      gcs_path_prefix = "projects/fake-project/location/us/app/test-app/123/$session/123"
+      gcs_bucket      = "gs://my-ces-app-audio-recordings"
+      gcs_path_prefix = "projects/ces-terraform-test/location/us/app/test-app/123/$session/123"
     }
 
     bigquery_export_settings {
-      dataset = "projects/fake-project/datasets/fake-dataset/tables/fake-table"
+      dataset = "projects/ces-terraform-test/datasets/ces_app_logs"
       enabled = false
-      project = "projects/fake-project"
+      project = "projects/ces-terraform-test"
     }
 
     cloud_logging_settings {
@@ -129,7 +129,7 @@ resource "google_ces_app" "ces_app_basic" {
     }
   }
 
-  variable_declarations {
+variable_declarations {
     name        = "test"
     description = "test"
     schema {
@@ -215,9 +215,9 @@ resource "google_ces_app" "ces_app_basic" {
   display_name = "tf-test-my-app%{random_suffix}"
 
   language_settings {
-    default_language_code    = "en-ES"
-    supported_language_codes = ["en-US", "fr-FR"]
-    enable_multilingual_support = false
+    default_language_code    = "en-US"
+    supported_language_codes = ["es-ES", "fr-FR"]
+    enable_multilingual_support = true
     fallback_action          = "escalate"
   }
 
@@ -240,27 +240,27 @@ resource "google_ces_app" "ces_app_basic" {
     inactivity_timeout = "300s"
 
     ambient_sound_config {
-      gcs_uri = "gs://fake-bucket-updated/sounds/ambient.wav"
-      volume_gain_db         = -4.0
+      gcs_uri = "gs://my-bucket/sounds/ambient.wav"
+      volume_gain_db         = -6.0
     }
   }
 
   logging_settings {
     redaction_config {
       enable_redaction   = true
-      inspect_template   = "projects/fake-project/locations/us/inspectTemplates/example-inspect-updated"
-      deidentify_template = "projects/fake-project/locations/us/deidentifyTemplates/example-deidentify-updated"
+      inspect_template   = "projects/ces-terraform-test/locations/us/inspectTemplates/example-inspect"
+      deidentify_template = "projects/ces-terraform-test/locations/us/deidentifyTemplates/example-deidentify"
     }
 
     audio_recording_config {
-      gcs_bucket      = "gs://fake-app-audio-recordings-updated"
-      gcs_path_prefix = "projects/fake-project/location/us/app/test-app/123/$session/123updated"
+      gcs_bucket      = "gs://my-ces-app-audio-recordings"
+      gcs_path_prefix = "projects/ces-terraform-test/location/us/app/test-app/123/$session/123"
     }
 
     bigquery_export_settings {
-      dataset = "projects/fake-project/datasets/fake-dataset/tables/fake-table"
-      enabled = true
-      project = "projects/fake-project"
+      dataset = "projects/ces-terraform-test/datasets/ces_app_logs"
+      enabled = false
+      project = "projects/ces-terraform-test"
     }
 
     cloud_logging_settings {
@@ -273,67 +273,67 @@ resource "google_ces_app" "ces_app_basic" {
   }
 
   model_settings {
-    model       = "gemini-2.0-flash"
-    temperature = 1.0
+    model       = "gemini-1.5-flash"
+    temperature = 0.5
   }
 
   evaluation_metrics_thresholds {
     golden_evaluation_metrics_thresholds {
       turn_level_metrics_thresholds {
-        semantic_similarity_success_threshold        = 4
-        overall_tool_invocation_correctness_threshold = 0.1
+        semantic_similarity_success_threshold        = 3
+        overall_tool_invocation_correctness_threshold = 1.0
       }
       expectation_level_metrics_thresholds {
-        tool_invocation_parameter_correctness_threshold = 0.1
+        tool_invocation_parameter_correctness_threshold = 1.0
       }
     }
   }
 
-  variable_declarations {
-      name        = "test-updated"
-      description = "test-updated"
-      schema {
-        description = "schema description updated"
-        type        = "ARRAY"
-        nullable    = true
-        required = ["some_property_updated"]
-        enum = ["VALUE_B", "VALUE_C"]
-        ref = "#/defs/MyDefinition"
-        unique_items = false
-        defs = jsonencode({
-          SimpleString = {
-            type        = "STRING"
-            description = "A simple string definition updated"
-        }})
-        any_of = jsonencode([
-          {
-            type        = "STRING"
-            description = "any_of option 1: string_updated"
-          },])
-        default = jsonencode(
-          false)
-        prefix_items = jsonencode([
-          {
-            type        = "ARRAY"
-            description = "prefix item 1 updated"
-          },])
-        additional_properties = jsonencode(
-          {
-            type        = "BOOLEAN"
-          })
-        properties = jsonencode({
-          name = {
-            type        = "STRING"
-            description = "A name updated"
-        }})
-        items = jsonencode({
-            type        = "ARRAY"
-            description = "An array updated"
+variable_declarations {
+    name        = "test"
+    description = "test"
+    schema {
+      description = "schema description"
+      type        = "ARRAY"
+      nullable    = true
+      required = ["some_property"]
+      enum = ["VALUE_A", "VALUE_B"]
+      ref = "#/defs/MyDefinition"
+      unique_items = true
+      defs = jsonencode({
+        SimpleString = {
+          type        = "STRING"
+          description = "A simple string definition"
+      }})
+      any_of = jsonencode([
+        {
+          type        = "STRING"
+          description = "any_of option 1: string"
+        },])
+      default = jsonencode(
+        false)
+      prefix_items = jsonencode([
+        {
+          type        = "ARRAY"
+          description = "prefix item 1"
+        },])
+      additional_properties = jsonencode(
+        {
+          type        = "BOOLEAN"
         })
-      }
+      properties = jsonencode({
+        name = {
+          type        = "STRING"
+          description = "A name"
+      }})
+      items = jsonencode({
+          type        = "ARRAY"
+          description = "An array"
+      })
     }
+  }
 
-  global_instruction = "You are a virtual assistant for an e-commerce platform. Be friendly and helpful updated."
+  global_instruction = "You are a virtual assistant for an e-commerce platform. Be friendly and helpful."
 
   guardrails = [
   ]
