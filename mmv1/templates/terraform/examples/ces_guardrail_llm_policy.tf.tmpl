@@ -15,25 +15,27 @@ resource "google_ces_app" "ces_app_for_guardrail" {
   }
 }
 
-resource "google_ces_guardrail" "ces_guardrail_basic" {
+resource "google_ces_guardrail" "ces_guardrail_llm_policy" {
   guardrail_id = "{{index $.Vars "guardrail_id"}}"
   location     = google_ces_app.ces_app_for_guardrail.location
   app          = google_ces_app.ces_app_for_guardrail.app_id
   display_name = "{{index $.Vars "guardrail_display_name"}}"
   description  = "Guardrail description"
   action {
-    respond_immediately  {
-        responses {
-            text = "Text"
-            disabled = false
-        }
+    generative_answer {
+        prompt = "example_prompt"
     }
   }
   enabled = true
-  model_safety  {
-    safety_settings {
-        category = "HARM_CATEGORY_HATE_SPEECH"
-        threshold = "BLOCK_NONE"
+  llm_policy {
+    max_conversation_messages = 10
+    model_settings {
+        model = "gemini-2.5-flash"
+        temperature = 50
     }
+    prompt = "example_prompt"
+    policy_scope = "USER_QUERY"
+    fail_open = true
+    allow_short_utterance = true
   }
 }

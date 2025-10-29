@@ -23,7 +23,35 @@ import_format:
 - projects/{{project}}/locations/{{location}}/apps/{{app}}/guardrails/{{name}}
 examples:
 - name: "ces_guardrail_basic"
-  primary_resource_id: "my-guardrail"
+  primary_resource_id: "ces_guardrail_basic"
+  vars:
+    guardrail_display_name: 'my-guardrail'
+    app_display_name: 'my-app'
+    guardrail_id: 'guardrail-id'
+    app_id: 'app-id'
+- name: "ces_guardrail_transfer_agent_content_filter"
+  primary_resource_id: "ces_guardrail_transfer_agent_content_filter"
+  vars:
+    guardrail_display_name: 'my-guardrail'
+    app_display_name: 'my-app'
+    guardrail_id: 'guardrail-id'
+    app_id: 'app-id'
+- name: "ces_guardrail_generative_answer_llm_prompt_security"
+  primary_resource_id: "ces_guardrail_generative_answer_llm_prompt_security"
+  vars:
+    guardrail_display_name: 'my-guardrail'
+    app_display_name: 'my-app'
+    guardrail_id: 'guardrail-id'
+    app_id: 'app-id'
+- name: "ces_guardrail_code_callback"
+  primary_resource_id: "ces_guardrail_code_callback"
+  vars:
+    guardrail_display_name: 'my-guardrail'
+    app_display_name: 'my-app'
+    guardrail_id: 'guardrail-id'
+    app_id: 'app-id'
+- name: "ces_guardrail_llm_policy"
+  primary_resource_id: "ces_guardrail_llm_policy"
   vars:
     guardrail_display_name: 'my-guardrail'
     app_display_name: 'my-app'
@@ -278,6 +306,12 @@ properties:
     type: String
     description: Policy prompt.
     required: true
+  - name: allowShortUtterance
+    type: Boolean
+    description: |-
+      By default, the LLM policy check is bypassed for short utterances.
+      Enabling this setting applies the policy check to all utterances,
+      including those that would normally be skipped.
 - name: llmPromptSecurity
   type: NestedObject
   description: |-
@@ -333,6 +367,12 @@ properties:
       type: String
       description: Policy prompt.
       required: true
+    - name: allowShortUtterance
+      type: Boolean
+      description: |-
+        By default, the LLM policy check is bypassed for short utterances.
+        Enabling this setting applies the policy check to all utterances,
+        including those that would normally be skipped.
   - name: defaultSettings
     type: NestedObject
     description: Configuration for default system security settings.
@@ -344,35 +384,6 @@ properties:
         This field is for display purposes to show the user what prompt
         the system uses by default. It is OUTPUT_ONLY.
       output: true
-- name: modelArmor
-  type: NestedObject
-  description: |-
-    Guardrail that uses Cloud Model Armor to sanitize the prompt or
-    response. If the prompt or response is sanitized, the guardrail is
-    triggered.
-  properties:
-  - name: failOpen
-    type: Boolean
-    description: |-
-      If true, the guardrail will not trigger if it receives any errors from
-      the model armor service. By default, the guardrail will trigger if it
-      receives any errors from the model armor service.
-  - name: modelArmorTemplate
-    type: String
-    description: |-
-      Model armor template resource name.
-      Format:
-      `projects/{project_id}/locations/{location}/templates/{template_id}`
-    required: true
-  - name: sanitizationScope
-    type: String
-    description: |-
-      When to run the sanitization check with model armor.
-      Possible values:
-      PROMPT
-      RESPONSE
-      PROMPT_AND_RESPONSE
-    required: true
 - name: modelSafety
   type: NestedObject
   description: |-
